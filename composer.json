@@ -1,0 +1,23 @@
+{
+	"name": "buddysoft/yii2-widget",
+	"description": "Commonly used widgets",
+	"homepage": "https://github.com/liuwanwei/yii2-widget",
+	"license": "Apache Version 2.0",
+	"authors": [
+		{
+			"name": "liuwanwei",
+			"email": "liuwanwei@gmail.com",
+			"homepage": "https://weibo.com/iHarbor",
+			"role": "developer"
+		}
+	],
+	"require": {
+		"php": ">=5.6.15",
+		"yiisoft/yii2": "~2.0.7"
+	},
+	"autoload": {
+	    "psr-4": {
+	        "buddysoft\\widget\\": ""
+	    }
+	}
+}
