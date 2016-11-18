@@ -6,10 +6,10 @@ use Yii;
 
 class GitController extends ApiController{
 
-	public function actionCallback(){
+	public function actionOschinaCallback(){
 		$params = $_POST;
 
-		$this->exitWithSuccess('Im UK');
+		$this->exitWithSuccess($_POST['hook']['password']);
 	}
 }
 
