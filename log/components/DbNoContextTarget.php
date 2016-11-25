@@ -1,6 +1,6 @@
 <?php
 
-namespace buddysoft\widget\components;
+namespace buddysoft\widget\log\components;
 
 use Yii;
 
