@@ -16,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'id',
             [
             	'attribute' => 'log_time',
-            	'format' => ['date', 'php:m-d H:i:s'],
+            	'value' => function($model){
+                    return Date('m-d H:i:s', round($model->log_time));
+                }
             ],
             'message'
         ],
