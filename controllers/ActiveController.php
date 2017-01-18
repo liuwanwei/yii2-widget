@@ -31,20 +31,25 @@ class ActiveController extends \yii\rest\ActiveController{
     	$customActions = [
             // 对于具备 deleted 字段的表，执行假删除
     		'delete' => [
-    			'class' => 'common\actions\DeleteAction',
+    			'class' => 'buddysoft\widget\actions\DeleteAction',
     			'modelClass' => $this->modelClass,                
     		],
             // 对于创建和更新，重新查询并返回数据，保证用户传来的 string 格式的整型值被正确转换成 integer
             'create' => [
-                'class' => 'common\actions\CreateAction',
+                'class' => 'buddysoft\widget\actions\CreateAction',
                 'modelClass' => $this->modelClass,
                 'scenario' => $this->createScenario,
             ],
             'update' => [
-                'class' => 'common\actions\UpdateAction',
+                'class' => 'buddysoft\widget\actions\UpdateAction',
                 'modelClass' => $this->modelClass,
                 'checkAccess' => [$this, 'checkAccess'],
                 'scenario' => $this->updateScenario,
+            ],
+            'view' => [
+                'class' => 'buddysoft\widget\actions\ViewAction',
+                'modelClass' => $this->modelClass,
+                'checkAccess' => [$this, 'checkAccess'],
             ],
     	];
 

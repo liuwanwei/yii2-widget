@@ -14,15 +14,31 @@ class ApiController extends \yii\web\Controller{
 	const CODE_VALIDATION_FAILED	= -5;		// Model 对象验证错误
 	const CODE_INTERNAL_ERROR		= -100;		// 内部错误
 
+	private function areTheKeysAllStringType($data){
+		$keys = array_keys($data);
+		foreach ($keys as $key) {
+			if (is_int($key)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function makeDataMessage($code = 0, $msg = '', $data = null, $json=true) {
-		$result = array('head'=>array('code'=>$code, 'msg'=>$msg));
 		$result = ['status' => $code, 'msg' => $msg];
 
 		//判断data为空时不创建进json数据中
 
 		if (!empty($data)) {
 			if (is_array($data) && 0 != count($data)) {
-				$result['items'] = $data;
+				if ($this->areTheKeysAllStringType($data)) {
+					foreach ($data as $key => $value) {
+						$result[$key] = $value;
+					}
+				}else{
+					$result['items'] = $data;
+				}				
 			}else if (is_object($data)) {
 				$result['object'] = $data;
 			}else{
