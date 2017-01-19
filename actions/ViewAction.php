@@ -17,7 +17,7 @@ use yii\db\ActiveRecord;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class ViewAction extends \yii\rest\UpdateAction
+class ViewAction extends \yii\rest\ViewAction
 {
     /**
      * Displays a model.
