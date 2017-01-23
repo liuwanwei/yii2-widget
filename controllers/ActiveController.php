@@ -96,4 +96,87 @@ class ActiveController extends \yii\rest\ActiveController{
             }
         }
     }
+
+    private function emptyProvider(){
+        $modelClass = $this->modelClass;
+        $query = $modelClass::find();
+        $query->where('0=1');
+
+        return new \yii\data\ActiveDataProvider([
+            'query' => $query, 
+        ]);
+    }
+
+    /**
+     *
+     * 结束 RESTFul actions（一般是 index） 执行
+     * 一般用在发生参数错误时，调用本函数结束执行，返回标准协议：
+     * { 'status' : -1, 'msg' : $msg}
+     *
+     */
+    
+    protected function badRequest($msg){
+        throw new \yii\web\BadRequestHttpException($msg, 0);
+    }
+
+    protected function forbiddenRequest($msg = null){
+        if (empty($msg)) {
+            $msg = '禁止访问不属于自己的数据';
+        }
+        throw new \yii\web\ForbiddenHttpException($msg);
+    }
+
+    /**
+     *
+     * 如果 RESTFul 请求处理过程中发生异常，将异常消息转化成协议中规定的格式
+     * 使用时，在 main.php 的 components 中配置：
+     * 
+     * 'response' => [
+     *    'class' => 'yii\web\Response',
+     *    'charset' => 'UTF-8',
+     *    'on beforeSend' => function($event){
+     *        ActiveController::onBeforeSend($event);
+     *    },
+     * ],
+     *
+     */
+    
+    public static function onBeforeSend($event){
+        $response = $event->sender;
+        if ($response->data != null) {
+            // 将 Yii2 框架生成的异常信息，转换成符合自身协议格式的信息
+            $data = $response->data;
+            if (isset($data['status'])) {
+                if($data['status'] == 400){
+                    $status = ApiController::CODE_INVALID_PARAM;
+                    $msg = $data['message'];
+                }else if ($data['status'] == 401) {
+                    $status = ApiController::CODE_UNAUTHORIZED;
+                    $msg = '请求包认证信息错误';
+                }else if($data['status'] == 404){
+                    $status = ApiController::CODE_NOT_EXIST;
+                    $msg = '请求的对象不存在';
+                }else if($data['status'] == 403){
+                    $status = ApiController::CODE_UNAUTHORIZED;
+                    $msg = $data['message'];
+                }
+
+                if (isset($status)) {
+                    $response->data = [
+                        'status' => $status,
+                        'msg' => $msg,
+                    ];
+                }
+            }else{
+                // 对于查询接口，增加缺失的状态和消息字段
+                if (isset($data['items'])) {
+                    $response->data = [
+                        'status' => 0,
+                        'msg' => '查询成功',
+                        'items' => $data['items'],
+                    ];
+                }
+            }
+        }
+    }
 }
