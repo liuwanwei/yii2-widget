@@ -33,11 +33,13 @@ class ActiveController extends \yii\rest\ActiveController{
     		'delete' => [
     			'class' => 'buddysoft\widget\actions\DeleteAction',
     			'modelClass' => $this->modelClass,                
+                'checkAccess' => [$this, 'checkAccess'],                
     		],
             // 对于创建和更新，重新查询并返回数据，保证用户传来的 string 格式的整型值被正确转换成 integer
             'create' => [
                 'class' => 'buddysoft\widget\actions\CreateAction',
                 'modelClass' => $this->modelClass,
+                'checkAccess' => [$this, 'checkAccess'],
                 'scenario' => $this->createScenario,
             ],
             'update' => [
