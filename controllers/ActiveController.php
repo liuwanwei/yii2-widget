@@ -7,6 +7,8 @@ use yii\filters\auth\HttpBasicAuth;
 
 class ActiveController extends \yii\rest\ActiveController{
 
+    const QUERY_ENVELOPE = 'items';
+
 	// 设置认证方式：Http Baisc Auth
 	public function behaviors(){
 		$behaviors = parent::behaviors();
@@ -20,7 +22,7 @@ class ActiveController extends \yii\rest\ActiveController{
 	// 将查询返回的数据增加一个信封：items
 	public $serializer = [
         'class' => 'yii\rest\Serializer',
-        'collectionEnvelope' => 'items',
+        'collectionEnvelope' => self::QUERY_ENVELOPE,
     ];
 
     // 配置 actions 的特殊处理过程
@@ -99,16 +101,6 @@ class ActiveController extends \yii\rest\ActiveController{
         }
     }
 
-    private function emptyProvider(){
-        $modelClass = $this->modelClass;
-        $query = $modelClass::find();
-        $query->where('0=1');
-
-        return new \yii\data\ActiveDataProvider([
-            'query' => $query, 
-        ]);
-    }
-
     /**
      *
      * 结束 RESTFul actions（一般是 index） 执行
@@ -146,36 +138,41 @@ class ActiveController extends \yii\rest\ActiveController{
     public static function onBeforeSend($event){
         $response = $event->sender;
         if ($response->data != null) {
-            // 将 Yii2 框架生成的异常信息，转换成符合自身协议格式的信息
-            $data = $response->data;
+            // 注意：此处传递的是引用
+            $data = &$response->data;
             if (isset($data['status'])) {
+
+                // 将 Yii2 框架生成的异常信息，转换成符合自身协议格式的信息
                 if($data['status'] == 400){
-                    $status = ApiController::CODE_INVALID_PARAM;
+                    $code = self::CODE_INVALID_PARAM;
                     $msg = $data['message'];
                 }else if ($data['status'] == 401) {
-                    $status = ApiController::CODE_UNAUTHORIZED;
+                    $code = self::CODE_UNAUTHORIZED;
                     $msg = '请求包认证信息错误';
                 }else if($data['status'] == 404){
-                    $status = ApiController::CODE_NOT_EXIST;
+                    $code = self::CODE_NOT_EXIST;
                     $msg = '请求的对象不存在';
                 }else if($data['status'] == 403){
-                    $status = ApiController::CODE_UNAUTHORIZED;
+                    $code = self::CODE_UNAUTHORIZED;
                     $msg = $data['message'];
                 }
 
-                if (isset($status)) {
-                    $response->data = [
-                        'status' => $status,
+                if (isset($code)) {
+                    // 格式化异常错误反馈
+                    $data = [
+                        'status' => $code,
                         'msg' => $msg,
                     ];
                 }
             }else{
-                // 对于查询接口，增加缺失的状态和消息字段
-                if (isset($data['items'])) {
-                    $response->data = [
+
+                // 格式化查询接口，统一反馈协议格式，便于客户端处理
+                if (isset($data[static::QUERY_ENVELOPE])) {
+                    // 给查询结果增加一层封装
+                    $data = [
                         'status' => 0,
                         'msg' => '查询成功',
-                        'items' => $data['items'],
+                        static::QUERY_ENVELOPE => $data[static::QUERY_ENVELOPE],
                     ];
                 }
             }
