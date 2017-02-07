@@ -144,16 +144,16 @@ class ActiveController extends \yii\rest\ActiveController{
 
                 // 将 Yii2 框架生成的异常信息，转换成符合自身协议格式的信息
                 if($data['status'] == 400){
-                    $code = self::CODE_INVALID_PARAM;
+                    $code = ApiController::CODE_INVALID_PARAM;
                     $msg = $data['message'];
                 }else if ($data['status'] == 401) {
-                    $code = self::CODE_UNAUTHORIZED;
+                    $code = ApiController::CODE_UNAUTHORIZED;
                     $msg = '请求包认证信息错误';
                 }else if($data['status'] == 404){
-                    $code = self::CODE_NOT_EXIST;
+                    $code = ApiController::CODE_NOT_EXIST;
                     $msg = '请求的对象不存在';
                 }else if($data['status'] == 403){
-                    $code = self::CODE_UNAUTHORIZED;
+                    $code = ApiController::CODE_UNAUTHORIZED;
                     $msg = $data['message'];
                 }
 
