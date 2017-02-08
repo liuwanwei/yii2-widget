@@ -29,10 +29,15 @@ class UpdateAction extends \yii\rest\UpdateAction{
         // 重新查询，保证用户传来的 string 格式的整型值被正确转换成 integer
         $model = call_user_func([$this->modelClass, 'findOne'], $model->id);
 
-        return [
+        $data = [
             'status' => 0,
             'msg' => '成功',
-            'object' => $model
         ];
+
+        if (! empty($model)) {
+            $data['object'] = $model;
+        }
+
+        return $data;
     }
 }

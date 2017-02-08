@@ -19,10 +19,10 @@ class UploadController extends ApiController{
 		$model->inputFile = UploadedFile::getInstance($model, 'inputFile');
 
 		if ($model->upload()) {
-			$this->exitWithSuccess([[
+			$this->exitWithSuccess((object)[
 				'original' => $model->original, 
 				'thumbnail' => $model->thumbnail
-			]]);
+			]);
 		}
 
 		$this->exitWithCode(parent::CODE_INTERNAL_ERROR, json_encode($model->getErrors()));
