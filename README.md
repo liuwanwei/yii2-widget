@@ -15,8 +15,12 @@
 
 使用方法：
 
+在 main-local.php 中按照以下内容修改：
+
+```
 $config['modules']['gii'] = [
     'class' => 'yii\gii\Module',
+    // 添加下面内容
     'allowedIPs' => ['127.0.0.1', '::1', '192.168.0.*', '192.168.178.20'],
     'generators' => [
         'search' => [
@@ -27,3 +31,5 @@ $config['modules']['gii'] = [
         ]
     ]
 ];
+
+```
