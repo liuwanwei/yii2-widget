@@ -5,6 +5,7 @@ namespace buddysoft\widget\controllers;
 use yii\web\UploadedFile;
 use buddysoft\widget\models\UploadFileForm;
 use buddysoft\widget\models\UploadFilesForm;
+use buddysoft\widget\utils\ErrorFormatter;
 
 class UploadController extends ApiController{
 	public function actionFile(){
@@ -16,7 +17,7 @@ class UploadController extends ApiController{
 
 		$model = new UploadFileForm();
 		$model->scope = $params['scope'];
-		$model->inputFile = UploadedFile::getInstance($model, 'inputFile');
+		$model->inputFile = UploadedFile::getInstance($model, 'file');
 
 		if ($model->upload()) {
 			$this->exitWithSuccess((object)[
@@ -25,7 +26,7 @@ class UploadController extends ApiController{
 			]);
 		}
 
-		$this->exitWithCode(parent::CODE_INTERNAL_ERROR, json_encode($model->getErrors()));
+		$this->exitWithCode(parent::CODE_INTERNAL_ERROR, ErrorFormatter::firstError($model));
 	}
 
 	public function actionFiles(){

@@ -15,14 +15,25 @@ class ErrorFormatter{
 	 */
 	public static function fromModel($model, $onlyFirst = true){
 
+		$combined = '';
+
 		$errors = $model->getFirstErrors();
 		if (!empty($errors)) {
 		    foreach ($errors as $key => $value) {
-		        return "$key: $value";
+		    	$formattedError = "$key: $value";
+		    	if ($onlyFirst) {
+					return $formattedError;
+		    	}else{
+		    		$combined .= "{$formattedError}\n";
+		    	}
 		    }
 		}
 
-		return null;
+		return $combined;
+	}
+
+	public static function firstError($model){
+		return static::fromModel($model);
 	}
 
 	public static function error($model){
