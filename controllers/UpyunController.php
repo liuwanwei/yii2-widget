@@ -26,7 +26,7 @@ class UpyunController extends ApiController{
         $hash = hash_hmac('sha1', $data, $md5Password, true);
         $signature = base64_encode($hash);
 
-        echo "signature={$signature}";
+        echo json_encode(['signature'=>$signature]);
 	}
 }
 
