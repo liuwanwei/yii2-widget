@@ -133,11 +133,9 @@ class ActiveController extends \yii\rest\ActiveController{
      *    },
      * ],
      *
-     * @param Event $event 
-     * @param Boolean $useEnvelope 是否需要对查询（index）请求进行封装
      */
     
-    public static function onBeforeSend($event, $useEnvelope = true){
+    public static function onBeforeSend($event){
         $response = $event->sender;
         if ($response->data != null) {
             // 注意：此处传递的是引用
@@ -166,7 +164,7 @@ class ActiveController extends \yii\rest\ActiveController{
                         'msg' => $msg,
                     ];
                 }
-            }else if($useEnvelope){
+            }else{
 
                 // 格式化查询接口，统一反馈协议格式，便于客户端处理
                 if (isset($data[static::QUERY_ENVELOPE])) {
