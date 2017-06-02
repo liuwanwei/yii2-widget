@@ -52,7 +52,7 @@ class FileConvertor {
 	private function serializedFilename($filename){
 		$date = Carbon::now()->toDateTimeString();
 		$year = substr($date, 0, 4);
-		$month = substr($date, 4, 2);
+		$month = substr($date, 5, 2);
 
 		// 将 01 18:30:00 格式转化为 01-183000
 		$name = substr($date, -11, 11);
@@ -136,6 +136,6 @@ class FileConvertor {
 		$absolutePath = $this->absoluteUploadPath($uploadPath);
 		$uploadedFileInstance->saveAs($absolutePath);
 
-		return $this->imageDomain . $serializedFilename;
+		return $this->imageDomain . $serializedName;
 	}
 }
