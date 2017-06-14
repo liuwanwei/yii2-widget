@@ -121,8 +121,9 @@ class FileConvertor {
 	            $webPath = $this->imageDomain . $convertedName;
 	            $content = str_replace($matches[0][$i], "<img src=\"" . $webPath . "\"", $content);
 	        }
-	        return $content;
 	    }
+
+	    return $content;
 	}
 
 	/**
