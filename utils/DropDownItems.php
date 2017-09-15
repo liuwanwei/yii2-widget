@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace buddysoft\widget\utils;
 
@@ -12,6 +12,8 @@ class DropDownItems extends \yii\base\Object{
 	 *
 	 * @param array $itemOptions 所有真实存在的选项
 	 * @param string $emptyLabel 空选项的展示内容
+	 *
+	 * @return array 符合 \yii\widgets\ActiveField::dropDownList() $items 格式的数组
 	 */
 	
 	public static function fromOptions($itemOptions, $emptyLabel = '全部'){
@@ -31,11 +33,12 @@ class DropDownItems extends \yii\base\Object{
 	 *
 	 * 通过 ActiveRecord 记录生成所有选项
 	 *
-	 * @param string $className ActiveRecord 类名字
+	 * @param string $className      ActiveRecord 类名字
 	 * @param string $labelFieldName ActiveRecord 中用于获取标签字段的字段的名字
 	 * @param string $valueFieldName ActiveRecord 中用于获取选项值的字段的名字
-	 * @param string $emptyLabel 空选项的展示内容
+	 * @param string $emptyLabel     空选项的展示内容
 	 * 
+	 * @return array 符合 \yii\widgets\ActiveField::dropDownList() $items 格式的数组
 	 */
 	
 	public static function fromARs($className, $labelFieldName, $valueFieldName = 'id', $emptyLabel = '全部'){
