@@ -1,5 +1,6 @@
 {
 	"name": "buddysoft/yii2-widget",
+	"type": "yii2-extension",
 	"description": "Commonly used widgets",
 	"homepage": "https://github.com/liuwanwei/yii2-widget",
 	"license": "Apache Version 2.0",
