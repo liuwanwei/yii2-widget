@@ -21,9 +21,7 @@ class m170307_014621_insert_user extends Migration
 
     public function down()
     {
-        echo "m170307_014621_insert_user cannot be reverted.\n";
-
-        return false;
+        $this->delete('user', ['username' => 'admin']);
     }
 
     /*

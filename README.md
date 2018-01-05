@@ -33,3 +33,11 @@ $config['modules']['gii'] = [
 ];
 
 ```
+
+## migrations
+
+继承了为 mdmsoft/yii2-admin 模块创建第一个默认用户的 migration，使用方式
+
+```
+./yii migrate --migrationPath=@buddysoft/widget/migrations
+```
