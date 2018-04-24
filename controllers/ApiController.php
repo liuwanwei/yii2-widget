@@ -54,7 +54,18 @@ class ApiController extends \yii\web\Controller{
 	}
 
 	public function exitWithCode($code = 0, $msg = '', $data = null){
-		echo $this->makeDataMessage($code, $msg, $data);
+		/**
+		 *
+		 * 在前一个版本中，直接 echo 输出的内容，并调用 Yii::$app->end() 是可行的，
+		 * 但在 Yii 升级到 2.0.14.1 之后，调用 echo 后再调用 Yii::$app->end()，
+		 * 会触发异常： yii\web\HeadersAlreadySentException。
+		 * 
+		 * 以后都该保证用 Response 来管理输出到客户端的内容。
+		 */
+
+		// echo $this->makeDataMessage($code, $msg, $data);
+		$data = $this->makeDataMessage($code, $msg, $data);
+		Yii::$app->response->data = $data;
 		Yii::$app->end();
 	}
 
