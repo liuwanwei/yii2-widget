@@ -46,11 +46,14 @@ class ApiController extends \yii\web\Controller{
 			}
 		}
 		
-		if (!$json) {
-			return $result;
+		if ($json) {
+			// 使用 Response 来控制输出 JSON 数据，而不是自己转换
+			Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		}
+
+		return $result;
 		
-		return \yii\helpers\Json::encode($result);
+		// return \yii\helpers\Json::encode($result);
 	}
 
 	public function exitWithCode($code = 0, $msg = '', $data = null){

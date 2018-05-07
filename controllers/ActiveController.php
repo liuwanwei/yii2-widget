@@ -16,6 +16,9 @@ class ActiveController extends \yii\rest\ActiveController{
 			'class' => HttpBasicAuth::className()
 		];
 
+        // 永远返回 JSON 格式数据
+        $behaviors['contentNegotiator']['formats']['text/html'] = \yii\web\Response::FORMAT_JSON;
+
 		return $behaviors;
 	}
 
