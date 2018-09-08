@@ -2,23 +2,32 @@
 
 namespace buddysoft\widget\actions;
 
-use Yii;
-use yii\base\Model;
-use yii\db\ActiveRecord;
 use yii\web\ServerErrorHttpException;
 
 
 class DeleteAction extends \yii\rest\DeleteAction{
 
+	use ActionTrait;
+	use ModelTrait;
+	
+	public function run($id){
+		$model = $this->getModelById($id);
+		if ($model === null){
+			return $this->failedWithWrongParam("sid 错误");
+		}else{
+			return $this->runWithModel($model);
+		}
+	}
+	
     /**
      * Deletes a model.
      * @param mixed $id id of the model to be deleted.
      * @throws ServerErrorHttpException on failure.
+     *
+     * @return array response array matches protocol
      */
-    public function run($id)
+    public function runWithModel($model)
     {
-        $model = $this->findModel($id);
-
         if ($this->checkAccess) {
             call_user_func($this->checkAccess, $this->id, $model);
         }
@@ -27,14 +36,15 @@ class DeleteAction extends \yii\rest\DeleteAction{
         	// 对于有 deleted 字段的表，执行假删除
         	$model->deleted = 1;
         	$model->save();
-        	return ['status' => 0, 'msg' => '删除成功'];
+        	
+        	return $this->success('删除成功');
+        }else{
+	        // 常规删除
+	        if ($model->delete() === false) {
+		        return $this->failedWhenDeleteModel($model);
+	        }else{
+		        return $this->success('删除成功');
+	        }
         }
-
-        // 执行常规删除
-        if ($model->delete() === false) {
-            return ['status' => -1, 'msg' => $model->getErrors()];
-        }
-
-        return ['status' => 0, 'msg' => '删除成功'];
     }
 }

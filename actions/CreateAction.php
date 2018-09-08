@@ -3,28 +3,26 @@
 namespace buddysoft\widget\actions;
 
 use Yii;
-use yii\base\Model;
-use yii\db\ActiveRecord;
 use yii\web\ServerErrorHttpException;
 
 
 class CreateAction extends \yii\rest\CreateAction{
 
+	use ActionTrait;
+	
     /**
      * Deletes a model.
      * @param mixed $id id of the model to be deleted.
      * @throws ServerErrorHttpException on failure.
+     *
+     * @return array response array matches protocol
      */
     public function run()
     {
         $model = parent::run();
 
         if ($model->hasErrors()) {
-            $errors = array_values($model->getErrors());
-            return [
-                'status' => -10,
-                'msg' => $errors[0][0],
-            ];
+            return $this->failedWhenSaveModel($model);
         }
 
         /**
@@ -35,11 +33,14 @@ class CreateAction extends \yii\rest\CreateAction{
          */
         
         $model = call_user_func([$this->modelClass, 'findOne'], $model->id);
+	
+        /*
+         * 将调用成功时的 API status code 统一为 200
+         * closed: if opened, will xcx will send one more /schools/27 like 
+         */
+	    // $response = Yii::$app->getResponse();
+	    // $response->setStatusCode(200);
 
-        return [
-            'status' => 0,
-            'msg' => '成功',
-            'object' => $model
-        ];
+        return $this->successWithObject($model);
     }
 }

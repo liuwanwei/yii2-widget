@@ -3,41 +3,51 @@
 namespace buddysoft\widget\actions;
 
 use Yii;
-use yii\base\Model;
-use yii\db\ActiveRecord;
+use yii\web\ServerErrorHttpException;
 
 
 class UpdateAction extends \yii\rest\UpdateAction{
 
+	use ActionTrait;
+	use ModelTrait;
+	
+	public function run($id){
+		$model = $this->getModelById($id);
+		if ($model === null){
+			return $this->failedWithWrongParam("sid 错误");
+		}else{
+			return $this->runWithModel($model);
+		}
+	}
+	
+	
     /**
-     * Deletes a model.
+     * Update a model.
      * @param mixed $id id of the model to be deleted.
      * @throws ServerErrorHttpException on failure.
+     *
+     * @return array response array matches protocol
      */
-    public function run($id)
+    public function runWithModel($model)
     {
-        $model = parent::run($id);
+	    if ($this->checkAccess) {
+		    call_user_func($this->checkAccess, $this->id, $model);
+	    }
+	
+	    $model->scenario = $this->scenario;
+	    $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+	    if ($model->save() === false && !$model->hasErrors()) {
+		    throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
+	    }
 
         if ($model->hasErrors()) {
-            $errors = array_values($model->getErrors());
-            return [
-                'status' => -10,
-                'msg' => $errors[0][0],
-            ];
+            return $this->failedWhenSaveModel($model);
         }
 
         // 重新查询，保证用户传来的 string 格式的整型值被正确转换成 integer
-        $model = call_user_func([$this->modelClass, 'findOne'], $model->id);
-
-        $data = [
-            'status' => 0,
-            'msg' => '成功',
-        ];
-
-        if (! empty($model)) {
-            $data['object'] = $model;
-        }
-
-        return $data;
+	    $modelClass = $this->modelClass;
+	    $model = $modelClass::findOne($model->id);
+	    
+        return $this->successWithObject($model, '更新成功');
     }
 }
