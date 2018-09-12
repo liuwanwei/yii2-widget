@@ -8,7 +8,6 @@
 
 namespace buddysoft\widget\utils;
 
-use common\models\School;
 use Yii;
 
 class GlobalApp
