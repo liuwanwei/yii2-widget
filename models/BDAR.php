@@ -33,46 +33,26 @@ class BDAR extends ActiveRecord
 		return substr($className, $pos + 1);
 	}
 	
-	/*
-	 * 获取特定 controller/action 下需要返回给客户端的字段
-	 * TODO: 移除跟班信通项目相关的代码，将配置放到公共位置
+	
+	/**
+	 * 从 Yii 全局配置参数中解析需要排除的 Model 字段
+	 *
+	 * @return array
 	 */
-	public static function exceptFieldsByRoute(){
+	public static function getExceptFields(){
 		$excepts = [];
 		
 		$route = GlobalApp::route();
 		$className = static::getNeatClassName();
-		
-		if (strstr($route, 'login')){
-			switch ($className){
-				case 'User':
-					$excepts[] = 'accessToken';
-					break;
-				default:
-					break;
+
+		$configs = Yii::$app->params['exceptFields'];
+		foreach($configs as $unit){
+			if(in_array($route, $unit['routes']) &&
+			in_array($className, $unit['models'])){
+				$excepts = ArrayHelper::merge($excepts, $unit['fields']);
 			}
 		}
-		
-		switch ($route){
-			case 'notice/index':
-			case 'notice/view':
-			case 'receipt/index':
-			case 'receipt/view':
-				switch ($className){
-					case 'Notice':
-					case 'Receipt':
-						$excepts[] = 'createdAt';
-						$excepts[] = 'updatedAt';
-						break;
-					default:
-						break;
-				}
-				
-				break;
-			default:
-				break;
-		}
-		
+
 		return $excepts;
 	}
 	
@@ -83,13 +63,15 @@ class BDAR extends ActiveRecord
 	 */
 	public static function getCommonSecretFields(){
 		// 需要排除的秘密字段
-		$secrets = ['id', 'createdAt', 'updatedAt', 'accessToken'];
-		$excepts = static::exceptFieldsByRoute();
+		$secrets = Yii::$app->params['secretFields'];
+		$excepts = static::getExceptFields();
 		
 		// 从秘密字段中排除需要临时返回给用户的
 		foreach ($excepts as $value){
 			$keys = array_keys($secrets, $value);
-			unset($secrets[$keys[0]]);
+			if (!empty($keys)){
+				unset($secrets[$keys[0]]);
+			}			
 		}
 		
 		return $secrets;
