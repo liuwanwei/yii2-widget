@@ -35,6 +35,7 @@ class BDAR extends ActiveRecord
 	
 	/*
 	 * 获取特定 controller/action 下需要返回给客户端的字段
+	 * TODO: 移除跟班信通项目相关的代码，将配置放到公共位置
 	 */
 	public static function exceptFieldsByRoute(){
 		$excepts = [];
@@ -42,7 +43,7 @@ class BDAR extends ActiveRecord
 		$route = GlobalApp::route();
 		$className = static::getNeatClassName();
 		
-		if (strstr($route, 'wx-login')){
+		if (strstr($route, 'login')){
 			switch ($className){
 				case 'User':
 					$excepts[] = 'accessToken';

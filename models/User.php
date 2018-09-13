@@ -6,6 +6,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Exception;
 use yii\web\IdentityInterface;
 use buddysoft\widget\utils\ErrorFormatter;
+use buddysoft\widget\models\wx\WxUser;
+
 
 /**
  * User model
