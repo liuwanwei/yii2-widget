@@ -9,11 +9,12 @@
 
 namespace buddysoft\widget\models;
 
-use common\helpers\GlobalApp;
-use common\swoole\StringObject;
+
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use buddysoft\widget\utils\GlobalApp;
+use buddysoft\widget\utils\StringObject;
 
 class BDAR extends ActiveRecord
 {
