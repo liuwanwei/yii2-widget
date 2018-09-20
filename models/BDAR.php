@@ -58,6 +58,8 @@ class BDAR extends ActiveRecord
 	
 	/*
 	 * 根据当前请求的路由，确定需要屏蔽到的秘密字段定义
+	 * 
+	 * 定义秘密字段的方法，请参考 README.md 文件 "BDAR类" 小节
 	 *
 	 * @return array 需要屏蔽的秘密字段
 	 */

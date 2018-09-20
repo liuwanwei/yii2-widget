@@ -36,7 +36,8 @@ class CreateAction extends \yii\rest\CreateAction{
 	
         /*
          * 将调用成功时的 API status code 统一为 200
-         * closed: if opened, will xcx will send one more /schools/27 like 
+         *
+         * Closed: if opened, 小程序 will send one more request like /schools/27 after creation.
          */
 	    // $response = Yii::$app->getResponse();
 	    // $response->setStatusCode(200);

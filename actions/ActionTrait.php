@@ -13,6 +13,16 @@ use buddysoft\widget\utils\ErrorFormatter;
 use Yii;
 use yii\helpers\ArrayHelper;
 
+// 返回数据错误类型
+define('STATUS_SUCCESS', 0);
+define('STATUS_INVALID_PARAM', -1);    // 参数错误
+define('STATUS_CAN_NOT_SAVE', -2);    // 无法保存
+define('STATUS_EXCEED_LIMIT', -3);    // 越界
+define('STATUS_NOT_EXIST', -4);    // 不存在
+define('STATUS_NOT_MATCH', -5);    // 不匹配
+define('STATUS_ALREADY_EXIST', -6);    // 已存在
+define('STATUS_FAILED_FOR_REASON', -10);    // 其它错误，原因在 msg 中给出
+
 
 trait ActionTrait
 {

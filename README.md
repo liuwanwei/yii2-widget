@@ -48,7 +48,7 @@ $config['modules']['gii'] = [
 - 根据配置参数自动处理 secretFields 和 exceptFields
 
 ```
-// 不需要返回给客户端的字段，所有 Model 通用
+    // 不需要返回给客户端的字段，所有 Model 通用
     'secretFields' => ['id', 'createdAt', 'updatedAt', 'accessToken'],
     // 在某些请求中，依然需要返回给客户端，但是存在于 secretFields 数组中的字段
     'exceptFields' => [
