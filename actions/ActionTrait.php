@@ -30,22 +30,22 @@ trait ActionTrait
 	/*
 	 * 通过对象的 id（或 sid）属性，查询对象
 	 *
-	 * @param string $id         对象的 id 或 sid 属性，通过 is_numeric() 区分
+	 * @param string $objectId   对象的 id 或 sid 属性，通过 is_numeric() 区分
 	 * @param string $param      查询请求中传递过来的属性名字，只用于回显错误信息
 	 * @param string $modelClass 对象的类名字，通过 Model::className() 获取
 	 *
 	 * @return mix   返回 object 类型数据时表示查询成功，否则返回 array 类型的错误信息，返回 null 表示参数不存在
 	 */
-	private function _objectWithId($id, $param, $modelClass){
-		if ($id === null){
+	private function _objectWithId($objectId, $param, $modelClass){
+		if ($objectId === null){
 //			return $this->failedWithWrongParam("缺少 {$param} 参数");
 			return null;
 		}
 		
-		if (is_numeric($id)){
-			$object = $modelClass::findOne($id);
+		if (is_numeric($objectId)){
+			$object = $modelClass::findOne($objectId);
 		}else{
-			$object = $modelClass::findOne(['sid' => $id]);
+			$object = $modelClass::findOne(['sid' => $objectId]);
 		}
 		if ($object === null){
 			return $this->failedWithWrongParam("{$param} 目标对象不存在");
@@ -64,9 +64,9 @@ trait ActionTrait
 	 *
 	 */
 	public function objectWithGetParam($param, $modelClass){
-		$id = Yii::$app->request->get($param);
+		$objectId = Yii::$app->request->get($param);
 		
-		return $this->_objectWithId($id, $param, $modelClass);
+		return $this->_objectWithId($objectId, $param, $modelClass);
 	}
 	
 	/*
@@ -80,9 +80,9 @@ trait ActionTrait
 	 * 注意：调用者需使用 objectOk() 对返回值进行判断，
 	 */
 	public function objectWithPostParam($param, $modelClass){
-		$id = Yii::$app->request->post($param);
+		$objectId = Yii::$app->request->post($param);
 		
-		return $this->_objectWithId($id, $param, $modelClass);
+		return $this->_objectWithId($objectId, $param, $modelClass);
 	}
 	
 	/*
@@ -98,6 +98,38 @@ trait ActionTrait
 		}else{
 			return true;
 		}
+	}
+
+	/**
+	 * 统一入口，根据 id 或 sid 参数查询某种类型的对象是否存在
+	 *
+	 * @param string $param 			id 或 sid 所在请求参数中的键名字，如 'childSid'
+	 * @param string $modelClass	id 或 sid 对应对象的的类名字，带名字空间
+	 * @return mixed							null 代表请求参数不存在或对象不存在，否则返回对象的实例
+	 */
+	public function objectWithParam($param, $modelClass)
+	{
+		$request = Yii::$app->request;
+		if ($request->isPost || $request->isPatch) {
+			$objectId = Yii::$app->request->post($param);
+		}else{
+			$objectId = Yii::$app->request->get($param);
+		}
+
+		if ($objectId === null){
+			return null;
+		}
+		
+		/**
+		 * 通过判断 objectId 是不是纯数字，来确定通过 id 字段还是 sid 字段来查询 
+		 */
+		if (is_numeric($objectId)){
+			$object = $modelClass::findOne($objectId);
+		}else{
+			$object = $modelClass::findOne(['sid' => $objectId]);
+		}
+		
+		return $object;
 	}
 	
 	/*
@@ -152,6 +184,26 @@ trait ActionTrait
 		$newParams = ArrayHelper::merge($oldParams, $params);
 		
 		$request->setBodyParams($newParams);
+	}
+
+	/**
+	 * 统一设置请求参数接口，会自动判断 GET 还是 POST 请求
+	 *
+	 * @param array $params	需要设置的参数数组
+	 * @return void
+	 */
+	public function updateParams(array $params)
+	{
+		$request = Yii::$app->request;
+		if ($request->isPost || $request->isPatch) {
+			$oldParams = $request->getBodyParams();
+			$newParams = ArrayHelper::merge($oldParams, $params);		
+			$request->setBodyParams($newParams);
+		}else{
+			$oldParams = $request->queryParams;
+			$newParams = ArrayHelper::merge($oldParams, $params);			
+			$request->queryParams = $newParams;				
+		}
 	}
 	
 	/*
