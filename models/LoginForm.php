@@ -64,7 +64,12 @@ class LoginForm extends Model{
   public function getUser()
   {
     if ($this->_user === false) {
-      $this->_user = User::findByUsername($this->username);
+      // 使用用户设置的 User identity class
+      $userClass = Yii::$app->user->identityClass;
+      $user = $userClass::findByUsername($this->username);
+      $this->_user = $user;
+      
+      // $this->_user = User::findByUsername($this->username);
     }
 
     return $this->_user;
