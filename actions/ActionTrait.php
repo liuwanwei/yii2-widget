@@ -187,7 +187,7 @@ trait ActionTrait
 	}
 
 	/**
-	 * 统一设置请求参数接口，会自动判断 GET 还是 POST 请求
+	 * 统一设置请求参数接口，会自动判断 GET 还是 POST、PUT、PATCH 请求
 	 *
 	 * @param array $params	需要设置的参数数组
 	 * @return void
@@ -195,9 +195,9 @@ trait ActionTrait
 	public function updateParams(array $params)
 	{
 		$request = Yii::$app->request;
-		if ($request->isPost || $request->isPatch) {
+		if ($request->isPost || $request->isPatch || $request->isPut) {
 			$oldParams = $request->getBodyParams();
-			$newParams = ArrayHelper::merge($oldParams, $params);		
+			$newParams = ArrayHelper::merge($oldParams, $params);
 			$request->setBodyParams($newParams);
 		}else{
 			$oldParams = $request->queryParams;

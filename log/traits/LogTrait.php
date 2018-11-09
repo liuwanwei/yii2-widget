@@ -7,7 +7,7 @@
  */
 
 
-namespace console\traits;
+namespace buddysoft\widget\log\traits;
 
 use Yii;
 
