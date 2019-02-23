@@ -12,7 +12,9 @@ class ApiController extends \yii\web\Controller{
 	const CODE_ALREADY_REGISTERED 	= -3;		// 已注册
 	const CODE_NOT_EXIST			= -4;		// 对象不存在
 	const CODE_VALIDATION_FAILED	= -5;		// Model 对象验证错误
-	const CODE_INTERNAL_ERROR		= -100;		// 内部错误
+	const CODE_INTERNAL_ERROR		= -100;    // 内部错误
+
+  public $dataEnvelope = 'items';
 
 	private function areTheKeysAllStringType($data){
 		$keys = array_keys($data);
@@ -37,7 +39,7 @@ class ApiController extends \yii\web\Controller{
 						$result[$key] = $value;
 					}
 				}else{
-					$result['items'] = $data;
+					$result[$this->dataEnvelope] = $data;
 				}				
 			}else if (is_object($data)) {
 				$result['object'] = $data;
