@@ -5,6 +5,8 @@
  * User: sungeo
  * Date: 2018/1/4
  * Time: 15:42
+ * 
+ * 为所有派生类自动维护 sid 字段，并提供配置机制，来决定返回给客户端的数据项
  */
 
 namespace buddysoft\widget\models;
@@ -18,7 +20,20 @@ use buddysoft\widget\utils\StringObject;
 
 class BDAR extends ActiveRecord
 {
+	/**
+	 * 派生类是否具备 sid 属性
+	 * 
+	 * 通过这个开关来控制是否自动维护 sid 属性
+	 *
+	 * @var boolean
+	 */
+	public $useSid = true;
+
+	/**
+	 * 派生类中具备 sid 功能的字段名称
+	 */
 	const SID = 'sid';
+
 	
 	/*
 	 * 获取当前类的排除 namespace 后的名字
@@ -46,6 +61,10 @@ class BDAR extends ActiveRecord
 		$className = static::getNeatClassName();
 
 		$configs = Yii::$app->params['exceptFields'];
+		if (empty($configs)) {
+			return $excepts;
+		}
+
 		foreach($configs as $unit){
 			if(in_array($route, $unit['routes']) &&
 			in_array($className, $unit['models'])){
@@ -95,7 +114,10 @@ class BDAR extends ActiveRecord
 	 */
 	private function _discardSecretFields(&$fields){
 		$secrets = ArrayHelper::merge(static::getCommonSecretFields(), $this->secretFields());
-		
+		if (empty($secrets)) {
+			return;
+		}
+
 		// 排除秘密字段
 		foreach ($secrets as $item){
 			$keys = array_keys($fields, $item);
@@ -125,34 +147,41 @@ class BDAR extends ActiveRecord
 		 * 2. $this->>creator 对象必须拥有 sid 属性；
 		 * 3. $this->>creatorId 属性会被替换成 $this->>creatorSid 属性并返回给客户端；
 		 */
-		foreach ($fields as $field) {
-			$name = StringObject::from($field);
-			if ($name->endWith('Id')){
-				unset($fields[$field]);
-				$relation = $name->substr(0, $name->len() - 2);
-				$relationSid = $relation . 'Sid';
-				$fields[$relationSid] = function($model) use ($relation){
-					$relationModel = $model->$relation;
-					if ($relationModel === null){
-						return null;
-					}else{
-						return $relationModel->sid;
-					}
-				};
+		if ($this->useSid) {
+			foreach ($fields as $field) {
+				$name = StringObject::from($field);
+				if ($name->endWith('Id')){
+					unset($fields[$field]);
+					$relation = $name->substr(0, $name->len() - 2);
+					$relationSid = $relation . 'Sid';
+					$fields[$relationSid] = function($model) use ($relation){
+						$relationModel = $model->$relation;
+						if ($relationModel === null){
+							return null;
+						}else{
+							// 将 $model->xxxId 替换成 $model->xxx->sid，xxx 是对象名字
+							return $relationModel->sid;
+						}
+					};
+				}
 			}
-		}
+		}		
 		
 		return $fields;
 	}
 	
 	/*
-	 * 调用对象 save() 接口保存数据之前自动生成 sid 属性
+	 * 调用 save() 保存数据之前，自动生成 sid 属性
 	 *
 	 * save() 接口执行时，内部调用顺序是 beforeValidate - beforeSave - afterSave，
 	 * 所以要在 beforeValidate 之前，为新创建的对象生成 sid 属性，否则会验证失败。
 	 */
 	public function beforeValidate()
 	{
+		if (! $this->useSid) {
+			return parent::beforeValidate();
+		}
+
 		// 获取当前执行的对象类名字
 		$class = StringObject::from(static::class);
 		
