@@ -33,7 +33,7 @@ class Migration extends \yii\db\Migration
 	 * 
 	 * @return 参考 \yii\db\Migrations::addForeignKey() 的返回值
 	 */
-	public function createForeignKey($thisTable, $thisColumn, $refTable, $refColumn, $delete = null, $update = null){
+	public function createForeignKey($thisTable, $thisColumn, $refTable, $refColumn = 'id', $delete = null, $update = null){
 		$name = $this->_getForeignKeyName($thisTable, $thisColumn, $refTable);
 		$this->addForeignKey($name, $thisTable, $thisColumn, $refTable, $refColumn, $delete, $update);
 	}
