@@ -72,6 +72,7 @@ class WxUser extends \buddysoft\widget\models\BDAR
         ];
     }
 
+    
     /*
      * 更新数据库中保存的微信用户信息
      *

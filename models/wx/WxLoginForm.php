@@ -98,7 +98,7 @@ class WxLoginForm extends Model
     /**
      * Logs in a user using the provided username and password.
      *
-     * @return 微信用户信息获取成功时，返回 WxUser Model 对象，否则返回 null
+     * @return WxUser 微信用户信息获取成功时，返回 WxUser 对象，否则返回 null
      */
     public function login()
     {
@@ -108,13 +108,12 @@ class WxLoginForm extends Model
 		}else{
 			// 向服务器拿 session 信息
             $result = Yii::$app->weapp->getSessionInfo($this->wxCode);
+            if (empty($result)) {
+                Yii::error("向微信服务器获取 session 信息失败");
+                return null;
+            }
             $sessionKey = $result['sessionKey'];
-		}
-        
-        if (empty($result)) {
-            Yii::error("向微信服务器获取 session 信息失败");
-            return null;
-        }
+		}        
 
         Yii::debug("得到 sessionKey:{$sessionKey}");
         
