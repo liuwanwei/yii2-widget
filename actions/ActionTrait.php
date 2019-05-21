@@ -25,8 +25,7 @@ define('STATUS_FAILED_FOR_REASON', -10);    // 其它错误，原因在 msg 中�
 
 
 trait ActionTrait
-{
-	
+{	
 	/*
 	 * 通过对象的 id（或 sid）属性，查询对象
 	 *
@@ -131,7 +130,57 @@ trait ActionTrait
 		
 		return $object;
 	}
+
+
+	/**
+	 * 经典使用场景：通过传入的类名字（如 Clerk) 寻找 clerkSid 参数，查找 clerk 对象
+	 *
+	 * @param string $class class name with namespace
+	 * @return Object 成功时返回 $class 类型对象，否则返回 null
+	 */
+	public function classicObjectWithParam($class){
+		$name = $this->shortClassName($class);
+    $sidName = $name . 'Sid';
+
+    return $this->objectWithParam($sidName, $class);
+	}
+
+
+	/**
+	 * 返回完整类名字中的除去名字空间后的名字部分，并小写首字母
+	 * 如：'frontend/models/PayType' 会返回 payType
+	 *
+	 * @param string $modelClass 完整类名字
+	 * @return string 小写首字母的类名字
+	 */
+	public function shortClassName($modelClass){
+		$name = (new \ReflectionClass($modelClass))->getShortName();
+		return lcfirst($name);
+	}
+
+	/**
+   * 检查名字类似 xxxSid 的输入参数，假定 xxx 是对象类名字，xxxId 是需要保存的属性，
+   * 所以本函数要做的是先找到 xxx 对象，然后获取它的 xxx->id，更新到当前对象的 xxxId 属性中。
+   *
+   * @param string $class 目标对象的全名（带 namespace）
+   * @return bool 成功时返回 true，标明属性已更新；否则返回 false
+   */
+  public function updateObjectParam($class){
+		$name = $this->shortClassName($class);
+
+    $sidName = $name . 'Sid';
+    $idName = $name . 'Id';
+
+    $object = $this->objectWithParam($sidName, $class);
+    if (! $object) {
+      return false;
+    }
+
+    $this->updateParams([$idName, $object->id]);
+    return true;
+  }
 	
+
 	/*
 	 * 这对 objectOk() 判断为 false 的情况，返回统一的错误信息
 	 *
