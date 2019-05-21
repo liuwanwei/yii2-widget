@@ -47,7 +47,7 @@ class WxLoginForm extends Model
 	 *
 	 * @return boolean
 	 */
-    private function enableFakeLogin(){
+    protected function enableFakeLogin(){
         if (isset(Yii::$app->params['fakeUser.enabled'])){
             if (Yii::$app->params['fakeUser.enabled'] === true) {
                 return true;
@@ -64,14 +64,14 @@ class WxLoginForm extends Model
      *
      * @return boolean
      */
-    private function _isFakeLogin(){
+    protected function _isFakeLogin(){
         if (! $this->enableFakeLogin()) {
             // 假登录开关未打开
             return false;
         }else{
             // 判断是否符合特定用户名
             return ($this->wxCode == Yii::$app->params['fakeUser.wxCode']);
-        }        
+        }
     }
     
 	/*
@@ -79,7 +79,7 @@ class WxLoginForm extends Model
 	 *
 	 * 参考：https://mp.weixin.qq.com/debug/wxadoc/dev/api/open.html#wxgetuserinfoobject
 	 */
-    private function _decryptWxUser(string $sessionKey){
+    protected function _decryptWxUser(string $sessionKey){
 	    $data = WxBizDataCrypt::decryptEncryptedData($this->encryptedData, $this->iv, $sessionKey);
 	    if ($data === null){
 		    Yii::error("解密用户信息失败");
