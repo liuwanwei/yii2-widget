@@ -1,6 +1,6 @@
 <?php
 
-use yii\db\Migration;
+use buddysoft\widget\migrations\Migration;
 
 /**
  * Class m180106_032916_alter_user_table
@@ -12,11 +12,12 @@ class m180106_032916_alter_user_table extends Migration
      */
     public function safeUp()
     {
-    	$col = $this->string(64)->notNull()->after('id')->unique();
-    	$this->addColumn('user', 'sid', $col);
-		
-		$col = $this->string(64)->after('sid')->comment('访问令牌')->unique();
-		$this->addColumn('user', 'accessToken', $col);
+      $sid = $this->string(64)->notNull()->after('id')->unique();
+      $accessToken = $this->string(64)->after('sid')->comment('访问令牌')->unique();
+      
+      $this->addColumn('user', 'sid', $sid);      
+      $this->addColumn('user', 'accessToken', $accessToken);
+      $this->createIdx('user', 'sid', true);
     }
 
     /**
@@ -24,7 +25,8 @@ class m180106_032916_alter_user_table extends Migration
      */
     public function safeDown()
     {
-    	$this->dropColumn('user', 'sid');
-	    $this->dropColumn('user', 'accessToken');
+      $this->dropIdx('user', 'sid');
+      $this->dropColumn('user', 'accessToken');
+    	$this->dropColumn('user', 'sid');	    
     } 
 }
