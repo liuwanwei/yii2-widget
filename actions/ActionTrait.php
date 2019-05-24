@@ -176,7 +176,7 @@ trait ActionTrait
       return false;
     }
 
-    $this->updateParams([$idName, $object->id]);
+    $this->updateParams([$idName => $object->id]);
     return true;
   }
 	

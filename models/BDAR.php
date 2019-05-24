@@ -60,7 +60,7 @@ class BDAR extends ActiveRecord
 		$route = GlobalApp::route();
 		$className = static::getNeatClassName();
 
-		$configs = Yii::$app->params['exceptFields'];
+		$configs = Yii::$app->params['exceptFields'] ?? null;
 		if (empty($configs)) {
 			return $excepts;
 		}
@@ -84,7 +84,11 @@ class BDAR extends ActiveRecord
 	 */
 	public static function getCommonSecretFields(){
 		// 需要排除的秘密字段
-		$secrets = Yii::$app->params['secretFields'];
+		$secrets = Yii::$app->params['secretFields'] ?? null;
+		if (! $secrets) {
+			return;
+		}
+
 		$excepts = static::getExceptFields();
 		
 		// 从秘密字段中排除需要临时返回给用户的
