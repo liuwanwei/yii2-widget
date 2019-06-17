@@ -133,7 +133,10 @@ trait ActionTrait
 
 
 	/**
-	 * 经典使用场景：通过传入的类名字（如 Clerk) 寻找 clerkSid 参数，查找 clerk 对象
+	 * 经典使用场景：通过传入的类名字，生成期望参数名字，返回对象
+	 * 
+	 * 例如传入 'common\models\Clerk' 字符串，意味着调用者试图查找名为 clerkSid 的参数，并通过 Clerk::findOne(['sid' => $clerkSid])，
+	 * 查找 common\models\Clerk 对象。
 	 *
 	 * @param string $class class name with namespace
 	 * @return Object 成功时返回 $class 类型对象，否则返回 null

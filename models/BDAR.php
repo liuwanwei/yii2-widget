@@ -86,15 +86,15 @@ class BDAR extends ActiveRecord
 		// 需要排除的秘密字段
 		$secrets = Yii::$app->params['secretFields'] ?? null;
 		if (! $secrets) {
-			return;
+			return [];
 		}
 
 		$excepts = static::getExceptFields();
 		
 		// 从秘密字段中排除需要临时返回给用户的
 		foreach ($excepts as $value){
-			$keys = array_keys($secrets, $value);
-			if (!empty($keys)){
+			$keys = array_keys($secrets, $value, true);
+			if (! empty($keys)){
 				unset($secrets[$keys[0]]);
 			}			
 		}
@@ -102,10 +102,22 @@ class BDAR extends ActiveRecord
 		return $secrets;
 	}
 	
-	/*
+	/**
 	 * 子类重载来定义自己的秘密字段
+	 * 
+	 * @return array
 	 */
 	protected function secretFields(){
+		return [];
+	}
+
+	/**
+	 * 子类重载来定义自己必须输出的字段
+	 * 优先级最高，高于在全局配置中的设置，也高于 secretFields() 的定义
+	 *
+	 * @return array
+	 */
+	protected function exceptFields(){
 		return [];
 	}
 	
@@ -122,9 +134,20 @@ class BDAR extends ActiveRecord
 			return;
 		}
 
+		$excepts = $this->exceptFields();
+		if (! empty($excepts)) {
+			// 从秘密字段数组中移除需要排除的字段
+			foreach ($excepts as $value) {
+				$keys = array_keys($secrets, $value, true);
+				if (! empty($keys)) {
+					unset($secrets[$keys[0]]);
+				}
+			}
+		}
+
 		// 排除秘密字段
 		foreach ($secrets as $item){
-			$keys = array_keys($fields, $item);
+			$keys = array_keys($fields, $item, true);
 			if (!empty($keys)){
 				unset($fields[$keys[0]]);
 			}
