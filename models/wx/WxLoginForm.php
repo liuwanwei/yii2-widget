@@ -62,15 +62,28 @@ class WxLoginForm extends Model
      *
      * 根据是否使用毛宇用户的临时 wxCode 来判断
      *
-     * @return boolean
+     * @return string 当前是 fake user 时，返回配置好的 sessionKey，否则返回 null
      */
     protected function _isFakeLogin(){
         if (! $this->enableFakeLogin()) {
             // 假登录开关未打开
-            return false;
+            return null;
         }else{
             // 判断是否符合特定用户名
-            return ($this->wxCode == Yii::$app->params['fakeUser.wxCode']);
+            if (($this->wxCode == Yii::$app->params['fakeUser.wxCode'])) {
+                // 不跟微信服务器通信，直接使用配置的 session 信息
+                return Yii::$app->params['fakeUser.sessionKey'];
+            }
+
+            // 新增对多个 fake users 的支持
+            $fakeUsers = Yii::$app->params['fakeUsers'] ?? [];
+            foreach ($fakeUsers as $user) {
+                if ($user['wxCode'] == $this->wxCode) {
+                    return $user['sessionKey'];
+                }
+            }
+
+            return null;
         }
     }
     
@@ -102,10 +115,8 @@ class WxLoginForm extends Model
      */
     public function login()
     {
-		if ($this->_isFakeLogin()) {
-			// 测试用，不跟微信服务器通信，直接使用配置的 session 信息
-			$sessionKey = Yii::$app->params['fakeUser.sessionKey'];
-		}else{
+        $sessionKey = $this->_isFakeLogin();
+		if (! $sessionKey) {
 			// 向服务器拿 session 信息
             $result = Yii::$app->weapp->getSessionInfo($this->wxCode);
             if (empty($result)) {
