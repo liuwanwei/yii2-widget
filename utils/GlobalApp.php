@@ -20,6 +20,15 @@ class GlobalApp
 	public static function route(){
 		return Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
 	}
+
+	/**
+	 * 返回当前已经登录的用户（如果存在的话）
+	 *
+	 * @return void
+	 */
+	public static function user(){
+		return Yii::$app->user->identity;
+	}
 	
 	/*
 	 * 获取当前登录用户 id
