@@ -109,10 +109,14 @@ trait ActionTrait
 	public function objectWithParam($param, $modelClass)
 	{
 		$request = Yii::$app->request;
-		if ($request->isPost || $request->isPatch) {
-			$objectId = Yii::$app->request->post($param);
+
+		if ($request->isPost) {
+			$objectId = $request->post($param);
+		}else if($request->isPut || $request->isPatch){
+			// PUT 和 PATCH 用相同的处理方法，参考：https://www.yiiframework.com/doc/guide/2.0/en/runtime-requests
+			$objectId = $request->getBodyParam($param);
 		}else{
-			$objectId = Yii::$app->request->get($param);
+			$objectId = $request->get($param);
 		}
 
 		if ($objectId === null){
