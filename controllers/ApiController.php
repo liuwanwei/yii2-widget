@@ -6,13 +6,13 @@ use Yii;
 
 class ApiController extends \yii\web\Controller{
 	
-	const CODE_SUCCESS 				= 0;
-	const CODE_INVALID_PARAM 		= -1;		// 参数错误
-	const CODE_UNAUTHORIZED			= -2;		// 未授权
-	const CODE_ALREADY_REGISTERED 	= -3;		// 已注册
-	const CODE_NOT_EXIST			= -4;		// 对象不存在
+	const CODE_SUCCESS 						= 0;
+	const CODE_INVALID_PARAM 			= -1;		// 参数错误
+	const CODE_UNAUTHORIZED				= -2;		// 未授权
+	const CODE_ALREADY_REGISTERED = -3;		// 已注册
+	const CODE_NOT_EXIST					= -4;		// 对象不存在
 	const CODE_VALIDATION_FAILED	= -5;		// Model 对象验证错误
-	const CODE_INTERNAL_ERROR		= -100;    // 内部错误
+	const CODE_INTERNAL_ERROR			= -100; // 内部错误
 
   public $dataEnvelope = 'items';
 
