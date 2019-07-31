@@ -211,12 +211,13 @@ trait ActionTrait
 	 * 合并错误信息和上下文信息到一个字符串
 	 */
 	private function _mergeMessage($category, $context){
-		$error = $category;
-		if ($context){
-			$error = $category . ': ' . $context;
+		if (empty($category)) {
+			return $context;
+		} else if (empty($context)) {
+			return $category;
+		}else {
+			return $category . ': ' . $context;
 		}
-		
-		return $error;
 	}
 	
 	/*
@@ -301,7 +302,7 @@ trait ActionTrait
 	 * @return array response array matches protocol
 	 */
 	public function failedWhenSaveModel($model, $context = null){
-		$error = $this->_mergeMessage('', $context ? $context : '保存失败');
+		$error = $this->_mergeMessage('', $context ? $context : '保存失败：');
 		$error .= ErrorFormatter::fromModel($model);
 		return [
 			'status' => STATUS_CAN_NOT_SAVE,
@@ -310,7 +311,7 @@ trait ActionTrait
 	}
 	
 	public function failedWhenDeleteModel($model, $context = null){
-		return $this->failedWhenSaveModel($model, $context ? $context : '删除失败');
+		return $this->failedWhenSaveModel($model, $context ? $context : '删除失败：');
 	}
 	
 	/*

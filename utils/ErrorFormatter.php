@@ -33,7 +33,7 @@ class ErrorFormatter{
 		$errors = $model->getFirstErrors();
 		if (!empty($errors)) {
 		    foreach ($errors as $key => $value) {
-		    	$formattedError = "$key: $value";
+		    	$formattedError = $value;
 		    	if ($onlyFirst) {
 					return $formattedError;
 		    	}else{
