@@ -140,11 +140,16 @@ class ActiveController extends \yii\rest\ActiveController{
     
     public static function onBeforeSend($event){
         $response = $event->sender;
+
+        /**
+         * Yii 框架产生的异常会填充 $response->data['status'] 字段，这是下面处理的基础
+         */
+
         if ($response->data != null) {
             // 注意：此处传递的是引用
             $data = &$response->data;
+            $code = null;
             if (isset($data['status'])) {
-
                 // 将 Yii2 框架生成的异常信息，转换成符合自身协议格式的信息
                 if($data['status'] == 400){
                     $code = ApiController::CODE_INVALID_PARAM;
@@ -160,24 +165,23 @@ class ActiveController extends \yii\rest\ActiveController{
                     $msg = $data['message'];
                 }
 
-                if (isset($code)) {
+                if ($code != null) {
+                    // 将调整过的异常反馈当作正常数据，请求端(app或小程序)只通过 status 区分
+                    $response->statusCode = 200;
+
                     // 格式化异常错误反馈
                     $data = [
                         'status' => $code,
                         'msg' => $msg,
                     ];
                 }
-            }else{
-
-                // 格式化查询接口，统一反馈协议格式，便于客户端处理
-                if (isset($data[static::QUERY_ENVELOPE])) {
-                    // 给查询结果增加一层封装
-                    $data = [
-                        'status' => 0,
-                        'msg' => '查询成功',
-                        static::QUERY_ENVELOPE => $data[static::QUERY_ENVELOPE],
-                    ];
-                }
+            }else if (isset($data[static::QUERY_ENVELOPE])){
+                // 正常查询结果请求时，返回的数组数据，增加一层封装
+                $data = [
+                    'status' => 0,
+                    'msg' => '查询成功',
+                    static::QUERY_ENVELOPE => $data[static::QUERY_ENVELOPE],
+                ];
             }
         }
     }
