@@ -17,7 +17,9 @@ trait LogTrait {
 	}
 
 	public static function logIt($msg, $toLogFile){
-		echo "$msg\n";
+		if (Yii::$app && (Yii::$app instanceof \yii\console\Application)) {
+			echo "$msg\n";	
+		}
 
 		/*
 		 * 如果设置了 logCategory 属性，不论是否设置 $toLogFile 参数，都输出到文件
