@@ -9,6 +9,8 @@ use Carbon\Carbon;
 
 class UploadForm extends \yii\base\Model{
 
+	public $uploadDirectory;
+
 	/**
 	 *
 	 * 需要直接从 POST 数据中提取数据，不需要在表单数据外层再包过一层 Form Name。
@@ -39,8 +41,14 @@ class UploadForm extends \yii\base\Model{
 	 */
 	
 	protected function realPath($webPath){
-	    // 从 wsdweb/frontend/web 跳到 wedweb 根目录
-	    return Yii::getAlias('@webroot'). '/' . $webPath;
+		if (! empty($this->uploadDirectory)) {
+			$root = $this->uploadDirectory;
+		}else{
+			// 默认存放于 web 子目录中
+			$root = Yii::getAlias('@webroot');
+		} 
+
+		return $root . '/' . $webPath;
 	}
 
 	/**
