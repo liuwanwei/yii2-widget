@@ -58,6 +58,24 @@ class ApiController extends \yii\web\Controller{
 		// return \yii\helpers\Json::encode($result);
 	}
 
+	/**
+	 * generate output array
+	 *
+	 * @param integer $code
+	 * @param string $msg
+	 * @param mixed $data
+	 * @return void
+	 * 
+	 * $data can be array, object or basic variables.
+	 * Let's assume response is an array named $resp, generally, it has two elements:
+	 * $resp['status']: status code.
+	 * $resp['msg']:    description message.
+	 *  
+	 * if $data is array and all keys are string, it's elements are all put to $resp root array.
+	 * if $data is array and at least one key isn't string, it is packed as a whole in $resp['items']
+	 * if $data is an object, it is put to $resp['object'] element.
+	 * otherwise, it is put to $resp['extra'] element.
+	 */
 	public function exitWithCode($code = 0, $msg = '', $data = null){
 		/**
 		 *
