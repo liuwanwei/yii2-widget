@@ -8,9 +8,8 @@
 
 namespace buddysoft\widget\actions;
 
-
-use buddysoft\widget\utils\ErrorFormatter;
 use Yii;
+use buddysoft\widget\utils\ErrorFormatter;
 use yii\helpers\ArrayHelper;
 
 // 返回数据错误类型
@@ -28,7 +27,47 @@ define('STATUS_FAILED_FOR_REASON',-10);			// 其它错误，原因在 msg 中给
 
 
 trait ActionTrait
-{	
+{
+	/**
+	 * 通过私有成员存储错误信息的方式，配合 _setReturns() 和 _makeReturns() 使用
+	 */
+	private $_status = 0;
+	private $_msg = '';
+	private $_object = null;
+	private $_items = null;
+
+	private function _setObject($object){
+		$this->_object = $object;
+	}
+
+	private function _setItems($items){
+		$this->_items = $items;
+	}
+
+	private function _setReturns(int $status, string $msg): void
+	{
+		$this->_status = $status;
+		$this->_msg = $msg;
+	}
+
+	private function _makeReturns(array $content = null): array
+	{
+		if (is_array($content) && count($content) > 1) {
+			$this->_setReturns($content[0], $content[1]);
+		}
+
+		$returns = ['status' => $this->_status, 'msg' => $this->_msg];
+		if ($this->_object) {
+			$returns['object'] = $this->_object;
+		}
+		if (is_array($this->_items)) {
+			$returns['items'] = $this->_items;
+		}
+
+		return $returns;
+	}
+
+
 	/*
 	 * 通过对象的 id（或 sid）属性，查询对象
 	 *
