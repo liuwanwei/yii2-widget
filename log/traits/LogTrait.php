@@ -16,9 +16,17 @@ trait LogTrait {
 		static::logIt($msg, $toLogFile);
 	}
 
-	public static function logIt($msg, $toLogFile){
+	/**
+	 * 当控制台下运行时，输出日志到控制台，根据参数选择是否输入出到日志文件
+	 *
+	 * @param mixed $msg
+	 * @param boolean $toLogFile
+	 * @return void
+	 */
+	public static function logIt($msg, $toLogFile = false){
 		if (Yii::$app && (Yii::$app instanceof \yii\console\Application)) {
-			echo "$msg\n";	
+			print_r($msg);
+			print_r("\n");
 		}
 
 		/*
@@ -30,6 +38,32 @@ trait LogTrait {
 			}else{
 				Yii::error($msg);
 			}
+		}
+	}
+
+	/**
+	 * 输出日志到控制台或日志文件，二选一
+	 *
+	 * @param \yii\base\Model $model
+	 * @param mixed $desc string or array，描述信息
+	 * @return void
+	 */
+	public static function logErrors($model, $desc){
+		$errors = $model->getErrors();
+		if (Yii::$app && (Yii::$app instanceof \yii\console\Application)) {
+			if (! empty($desc)) {
+				print_r($desc);
+				print_r("\n");
+			}
+			print_r($errors);
+			print_r("\n");
+
+		}else{
+			if (!empty($desc)) {
+				\Yii::error($desc);
+			}
+	
+			\Yii::error($errors);
 		}
 	}
 }
