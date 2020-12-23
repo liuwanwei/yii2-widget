@@ -11,12 +11,13 @@ use mdm\admin\models\Assignment;
 class RoleHelper{
 
 	/**
-	 *
-	 * 获取某个用户的角色
-	 *
+	 * 返回用户首个角色的 AuthItem 对象
+	 * 
+	 * @param int $userId 
+	 * 
+	 * @return AuthItem | null
 	 */
-	
-	public static function roleForUser($userId){
+	public static function roleItemForUser($userId){
 		$manager = Yii::$app->getAuthManager();
 
 		$model = new Assignment($userId);
@@ -26,11 +27,26 @@ class RoleHelper{
 			$item = $manager->getRole($name);
 			if (! empty($item)) {
 				// 返回用户的第一个角色
-				return $name;
+				return $item;
 			}
 		}
 
-		return '未找到';
+		return null;
+	}
+
+	/**
+	 *
+	 * 获取某个用户的角色名字
+	 *
+	 */
+	
+	public static function roleForUser($userId){
+		$item = static::roleItemForUser($userId);
+		if ($item) {
+			return $item->name;
+		}else{
+			return '未找到';
+		}		
 	}
 
 	/**
