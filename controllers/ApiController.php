@@ -124,11 +124,17 @@ class ApiController extends \yii\web\Controller{
 	}
 
 	/**
+     * 将更多错误信息封装在 'data' 属性里,用于传输第三方服务器返回的错误信息
+     */
+    public function exitWithErrorData($error, $data){
+        $this->exitWithCode(self::CODE_INTERNAL_ERROR, $error, ['data' => $data]);
+    }
+
+	/**
 	 *
 	 * 当 Model 验证（validate）出错时，返回发现的第一个错误
 	 *
 	 */
-	
 	public function exitWithValidationError($model){
 		$errors = array_values($model->getErrors());
         $error = empty($errors) ? null : $errors[0][0];
