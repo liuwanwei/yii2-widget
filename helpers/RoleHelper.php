@@ -94,7 +94,7 @@ class RoleHelper{
 			if (! empty($item)) {
 				$manager->revoke($item, $userId);
 			}else{
-				throw new Exception('用户权限里混杂了非角色部分: ' . $name, 1);
+				throw new \Exception('用户权限里混杂了非角色部分: ' . $name, 1);
 			}
 		}
 
@@ -127,7 +127,7 @@ class RoleHelper{
 			if (! empty($item)) {
 				$manager->revoke($item, $userId);
 			}else{
-				throw new Exception('用户后台身份里混杂了非角色部分: ' . $name, 1);
+				throw new \Exception('用户后台身份里混杂了非角色部分: ' . $name, 1);
 			}
 		}
 	}	
