@@ -6,13 +6,13 @@ use Yii;
 
 class ApiController extends \yii\web\Controller{
 	
-	const CODE_SUCCESS 						= 0;
+	const CODE_SUCCESS 					= 0;
 	const CODE_INVALID_PARAM 			= -1;		// 参数错误
 	const CODE_UNAUTHORIZED				= -2;		// 未授权
-	const CODE_ALREADY_REGISTERED = -3;		// 已注册
-	const CODE_NOT_EXIST					= -4;		// 对象不存在
-	const CODE_VALIDATION_FAILED	= -5;		// Model 对象验证错误
-	const CODE_INTERNAL_ERROR			= -100; // 内部错误
+	const CODE_ALREADY_REGISTERED 		= -3;		// 已注册
+	const CODE_NOT_EXIST				= -4;		// 对象不存在
+	const CODE_VALIDATION_FAILED		= -5;		// Model 对象验证错误
+	const CODE_INTERNAL_ERROR			= -100; 	// 内部错误
 
   public $dataEnvelope = 'items';
 
@@ -102,7 +102,7 @@ class ApiController extends \yii\web\Controller{
 
 	/*
 	 * 快速返回错误信息的接口，参数 $error 的值必须通过 MyDefine() 来定义
-	 *   error: 字符串
+	 * @param string  $error 字符串
 	 */
 	public function exitWithError($error, $data = array()){
 		$key = $error;
@@ -117,9 +117,9 @@ class ApiController extends \yii\web\Controller{
 			if (is_string($error)) {
 				$this->exitWithCode(self::CODE_INTERNAL_ERROR, $error);
 			}else{
-				$result = array($code, $msg);
-				$this->exitWithCode(MACRO_ERROR_CODE, MACRO_ERROR_MSG, array("未定义的宏" => $result, "data" => $data));
-			}			
+				$msg = print_r($error, true);
+				$this->exitWithCode(self::CODE_INTERNAL_ERROR, $msg);
+			}
 		}
 	}
 
