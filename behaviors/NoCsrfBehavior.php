@@ -1,9 +1,25 @@
 <?php
+/**
+ * 用法：
+ * 在 Controller 类中：
+ * 
+ * public function behaviors(){
+ *   return [
+ *     'csrf' => [
+ *       'class' => NoCsrfBehavior::class,
+ *       'controller' => $this,
+ *       // 定义不进行 CSRF 验证的 actions
+ *       'actions' => [
+ *         'action-id-1',
+ *         'action-id-2',
+ *       ]
+ *     ]
+ *   ];
+ * }
+ */
 
 namespace buddysoft\widget\behaviors;
 
-use Yii;
-use yii\base\ActionEvent;
 use yii\base\Behavior;
 use yii\web\Controller;
 
