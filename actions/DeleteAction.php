@@ -9,11 +9,18 @@ class DeleteAction extends \yii\rest\DeleteAction{
 
 	use ActionTrait;
 	use ModelTrait;
+
+	/**
+	 * Soft Delete 字段名称
+	 *
+	 * @var string
+	 */
+	public $softDeleteField = 'deleted';
 	
 	public function run($id){
 		$model = $this->getModelById($id);
 		if ($model === null){
-			return $this->failedWithWrongParam("sid 错误");
+			return $this->failedWithWrongParam("找不到对象");
 		}else{
 			return $this->runWithModel($model);
 		}
@@ -32,9 +39,15 @@ class DeleteAction extends \yii\rest\DeleteAction{
             call_user_func($this->checkAccess, $this->id, $model);
         }
 
-        if (isset($model->deleted)) {
+		$softDeleteField = $this->softDeleteField;
+		
+        if ($model->hasAttribute($softDeleteField)) {
+			if ($model->$softDeleteField == 1) {
+				return $this->failedWithWrongParam("对象已删除");
+			}
+
         	// 对于有 deleted 字段的表，执行假删除
-        	$model->deleted = 1;
+        	$model->$softDeleteField = 1;
         	$model->save();
         	
         	return $this->success('删除成功');
