@@ -2,7 +2,7 @@
 
 ## controllers
 
-从 v2.4.0 开始，移除 API 相关代码。
+从 v3.0.0 开始，移除 API 相关代码。
 
 ## generators
 
